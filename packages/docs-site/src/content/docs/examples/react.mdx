@@ -1,0 +1,167 @@
+---
+title: React component
+description: A component folder with styles, tests and types.
+---
+
+import { FileTree, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
+
+A blueprint that creates a component folder with the component, CSS module, test, types and a barrel file.
+
+## Config
+
+```js title="scaffolder.config.js"
+module.exports = {
+    blueprints: [
+        {
+            title: "React component",
+            variables: [{ key: "name", prompt: "Component name" }],
+            snippets: {
+                component: `
+import styles from './{name.pascal}.module.css';
+import type { {name.pascal}Props } from './types';
+
+export function {name.pascal}({ children }: {name.pascal}Props) {
+  return <div className={styles.root}>{children}</div>;
+}
+`,
+                styles: `
+.root {
+  display: block;
+}
+`,
+                test: `
+import { render, screen } from '@testing-library/react';
+import { {name.pascal} } from './{name.pascal}';
+
+describe('{name.pascal}', () => {
+  it('renders children', () => {
+    render(<{name.pascal}>Hello</{name.pascal}>);
+    expect(screen.getByText('Hello')).toBeTruthy();
+  });
+});
+`,
+                types: `
+import type { ReactNode } from 'react';
+
+export interface {name.pascal}Props {
+  children?: ReactNode;
+}
+`,
+                index: `
+export { {name.pascal} } from './{name.pascal}';
+export type { {name.pascal}Props } from './types';
+`,
+            },
+            structure: {
+                folders: [
+                    {
+                        name: "{name.pascal}",
+                        files: [
+                            { name: "{name.pascal}.tsx", snippet: "component" },
+                            { name: "{name.pascal}.module.css", snippet: "styles" },
+                            { name: "{name.pascal}.test.tsx", snippet: "test" },
+                            { name: "types.ts", snippet: "types" },
+                            { name: "index.ts", snippet: "index" },
+                        ],
+                    },
+                ],
+            },
+        },
+    ],
+};
+```
+
+Braces that are not placeholders, such as `{children}` and `{styles.root}`, are left untouched.
+
+## Run
+
+<Steps>
+
+1. Right-click `src/components` in the Explorer and choose **Run File Scaffolder...**.
+
+2. Select **React component**.
+
+3. Enter `button`. Both `button` and `Button` produce the name `Button`.
+
+</Steps>
+
+## Result
+
+<FileTree>
+
+- src
+    - components
+        - **Button**
+            - **Button.tsx**
+            - **Button.module.css**
+            - **Button.test.tsx**
+            - **types.ts**
+            - **index.ts**
+
+</FileTree>
+
+Generated files for the input `button`:
+
+<Tabs>
+
+<TabItem label="Button.tsx">
+
+```tsx
+import styles from "./Button.module.css";
+import type { ButtonProps } from "./types";
+
+export function Button({ children }: ButtonProps) {
+    return <div className={styles.root}>{children}</div>;
+}
+```
+
+</TabItem>
+
+<TabItem label="Button.module.css">
+
+```css
+.root {
+    display: block;
+}
+```
+
+</TabItem>
+
+<TabItem label="Button.test.tsx">
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import { Button } from "./Button";
+
+describe("Button", () => {
+    it("renders children", () => {
+        render(<Button>Hello</Button>);
+        expect(screen.getByText("Hello")).toBeTruthy();
+    });
+});
+```
+
+</TabItem>
+
+<TabItem label="types.ts">
+
+```ts
+import type { ReactNode } from "react";
+
+export interface ButtonProps {
+    children?: ReactNode;
+}
+```
+
+</TabItem>
+
+<TabItem label="index.ts">
+
+```ts
+export { Button } from "./Button";
+export type { ButtonProps } from "./types";
+```
+
+</TabItem>
+
+</Tabs>

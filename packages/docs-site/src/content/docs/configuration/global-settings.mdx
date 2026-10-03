@@ -1,0 +1,88 @@
+---
+title: Global settings
+description: Blueprints available in every project via VS Code settings.
+sidebar:
+    order: 2
+---
+
+import { FileTree, Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+
+Global blueprints live in the VS Code setting `scaffolder.defaultConfig`. They are available in every workspace and are marked with 🌐 in the blueprint list.
+
+| Setting                    | Type     | Default                |
+| -------------------------- | -------- | ---------------------- |
+| `scaffolder.defaultConfig` | `object` | `{ "blueprints": [] }` |
+
+The default is an empty list: the extension ships without blueprints. If neither the settings nor `scaffolder.config.js` define any, running the command shows the error "No blueprints found".
+
+## Where to edit
+
+Open **Preferences: Open User Settings (JSON)** from the Command Palette and add the setting to `settings.json`. The setting can also be placed in workspace settings. VS Code offers completion and validation for the fields.
+
+## Texts as arrays of lines
+
+`settings.json` is JSON, which has no multi-line strings. Write the text of a snippet (or of a file's inline `content`) as an **array of strings**: each element is one line, and the lines are joined with a line break.
+
+```jsonc title="settings.json"
+{
+    "scaffolder.defaultConfig": {
+        "blueprints": [
+            {
+                "title": "Markdown note",
+                "variables": [{ "key": "name", "prompt": "Note title" }],
+                "snippets": {
+                    "note": ["# {name.pascal}", "", "Write here."],
+                },
+                "structure": {
+                    "files": [
+                        { "name": "{name.kebab}.md", "snippet": "note" },
+                        { "name": "{name.kebab}.todo.md", "content": ["- [ ] {name.raw}"] },
+                    ],
+                },
+            },
+        ],
+    },
+}
+```
+
+Run it on a folder and enter `weekly review`:
+
+<FileTree>
+
+- notes
+    - **weekly-review.md**
+    - **weekly-review.todo.md**
+
+</FileTree>
+
+<Tabs>
+
+<TabItem label="weekly-review.md">
+
+```md
+# WeeklyReview
+
+Write here.
+```
+
+</TabItem>
+
+<TabItem label="weekly-review.todo.md">
+
+```md
+- [ ] weekly review
+```
+
+</TabItem>
+
+</Tabs>
+
+<Aside type="tip">
+
+Need multi-line template literals, shared constants or functions? Use a [local config](/configuration/local-config/). Fields and placeholders are identical in both sources.
+
+</Aside>
+
+## Priority
+
+A local blueprint with the same `title` overrides the global one. See [API reference](/configuration/api-reference/#priority-and-merging).

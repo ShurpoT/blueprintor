@@ -1,0 +1,117 @@
+---
+title: Go package
+description: A package folder with a source file and a test.
+---
+
+import { FileTree, Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+A blueprint that creates a Go package folder with a source file and a test.
+
+## Config
+
+```js title="scaffolder.config.js"
+module.exports = {
+  blueprints: [
+    {
+      title: "Go package",
+      variables: [{ key: "pkg", prompt: "Package name (lowercase, one word)" }],
+      snippets: {
+        source: `
+package {pkg.raw}
+
+// Hello returns a greeting from the {pkg.raw} package.
+func Hello() string {
+	return "hello from {pkg.raw}"
+}
+`,
+        test: `
+package {pkg.raw}
+
+import "testing"
+
+func TestHello(t *testing.T) {
+	want := "hello from {pkg.raw}"
+	if got := Hello(); got != want {
+		t.Errorf("Hello() = %q, want %q", got, want)
+	}
+}
+`,
+      },
+      structure: {
+        folders: [
+          {
+            name: "{pkg.raw}",
+            files: [
+              { name: "{pkg.raw}.go", snippet: "source" },
+              { name: "{pkg.raw}_test.go", snippet: "test" },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+};
+```
+
+<Aside title="Why .raw?">
+
+A Go package name is lowercase, without hyphens or underscores. None of the case forms produces exactly that (`kebab` adds hyphens, `snake` adds underscores), so the value is inserted as typed and the prompt asks for a valid package name.
+
+</Aside>
+
+## Run
+
+<Steps>
+
+1. Right-click the folder where the package should live (for example `internal`) and choose **Run File Scaffolder...**.
+
+2. Select **Go package**.
+
+3. Enter `greeter`.
+
+</Steps>
+
+## Result
+
+<FileTree>
+
+- internal
+  - greeter
+    - **greeter.go**
+    - **greeter_test.go**
+
+</FileTree>
+
+<Tabs>
+
+<TabItem label="greeter.go">
+
+```go
+package greeter
+
+// Hello returns a greeting from the greeter package.
+func Hello() string {
+	return "hello from greeter"
+}
+```
+
+</TabItem>
+
+<TabItem label="greeter_test.go">
+
+```go
+package greeter
+
+import "testing"
+
+func TestHello(t *testing.T) {
+	want := "hello from greeter"
+	if got := Hello(); got != want {
+		t.Errorf("Hello() = %q, want %q", got, want)
+	}
+}
+```
+
+</TabItem>
+
+</Tabs>

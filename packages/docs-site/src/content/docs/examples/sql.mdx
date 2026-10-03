@@ -1,0 +1,95 @@
+---
+title: SQL migration
+description: A pair of up and down migration files for a new table.
+---
+
+import { FileTree, Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+A blueprint that creates a pair of migration files: one that creates a table and one that drops it. The migration number and the table name are entered when the blueprint runs.
+
+## Config
+
+```js title="scaffolder.config.js"
+module.exports = {
+  blueprints: [
+    {
+      title: "SQL migration",
+      variables: [
+        { key: "version", prompt: "Migration number (e.g. 001)" },
+        { key: "table", prompt: "Table name (e.g. users)" },
+      ],
+      snippets: {
+        up: `
+CREATE TABLE {table.snake} (
+    id BIGINT PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+`,
+        down: `
+DROP TABLE IF EXISTS {table.snake};
+`,
+      },
+      structure: {
+        files: [
+          { name: "{version.raw}_create_{table.snake}.up.sql", snippet: "up" },
+          { name: "{version.raw}_create_{table.snake}.down.sql", snippet: "down" },
+        ],
+      },
+    },
+  ],
+};
+```
+
+<Aside title="Number and dialect">
+
+There is no placeholder for the current date or a counter, so the migration number is entered by hand and inserted with `.raw`: it stays exactly as typed (`001`, `2026-10-03`, ...). Adjust the column types and defaults to your database.
+
+</Aside>
+
+## Run
+
+<Steps>
+
+1. Right-click your migrations folder (for example `db/migrations`) and choose **Run File Scaffolder...**.
+
+2. Select **SQL migration**.
+
+3. Enter `001` as the number, then `users` as the table name.
+
+</Steps>
+
+## Result
+
+<FileTree>
+
+- db
+  - migrations
+    - **001_create_users.up.sql**
+    - **001_create_users.down.sql**
+
+</FileTree>
+
+<Tabs>
+
+<TabItem label="001_create_users.up.sql">
+
+```sql
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+</TabItem>
+
+<TabItem label="001_create_users.down.sql">
+
+```sql
+DROP TABLE IF EXISTS users;
+```
+
+</TabItem>
+
+</Tabs>
+
+`{table.snake}` turns a name such as `user profile` or `UserProfile` into `user_profile`, which is the usual style for table names.

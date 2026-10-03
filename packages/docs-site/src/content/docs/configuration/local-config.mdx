@@ -1,0 +1,99 @@
+---
+title: Local config
+description: Project blueprints in scaffolder.config.js.
+sidebar:
+    order: 3
+---
+
+import { FileTree, Aside } from "@astrojs/starlight/components";
+
+A local config is a `scaffolder.config.js` file in the root of your workspace. It is the right place for blueprints that belong to a project, can be committed to the repository, and are marked with 📦 in the blueprint list.
+
+## Where to put it
+
+<FileTree>
+
+- your-project/
+    - **scaffolder.config.js**
+    - src
+    - package.json
+
+</FileTree>
+
+<Aside type="caution">
+
+In a multi-root workspace the file is searched only in the **first** workspace folder.
+
+</Aside>
+
+## Format
+
+The file is loaded with `require`, so it must be a CommonJS module that exports an object with a `blueprints` array:
+
+```js title="scaffolder.config.js"
+module.exports = {
+    blueprints: [
+        // blueprints, see the API reference
+    ],
+};
+```
+
+The shape of each blueprint is described in the [API reference](/configuration/api-reference/).
+
+- The file is **re-read on every run**. Edit it and run the command again, no reload needed. Other project files loaded from it with `require` are re-read too (modules in `node_modules` are not).
+- It is real JavaScript, so you can use constants, functions and `require` for other modules.
+- `export default` (ESM) is not supported. If the file fails to load, a warning with the error message is shown.
+- Inside a template literal, line breaks are written as plain line breaks, no `\n` needed.
+
+## Example
+
+Shared constants and multi-line content are the main reasons to prefer a local config:
+
+```js title="scaffolder.config.js"
+const license = `// Written with love and a lot of coffee.`;
+
+module.exports = {
+    blueprints: [
+        {
+            title: "Utility function",
+            variables: [{ key: "name", prompt: "Function name" }],
+            snippets: {
+                util: `
+${license}
+
+// {name.raw}
+export function brew{name.pascal}() {
+    // TODO: Add espresso shot and milk
+}`,
+            },
+            structure: {
+                files: [{ name: "{name.camel}.ts", snippet: "util" }],
+            },
+        },
+    ],
+};
+```
+
+Run it on `src/utils` and enter `format date`:
+
+<FileTree>
+
+- src
+    - utils
+        - **brewCappuccino.ts**
+
+</FileTree>
+
+```ts title="brewCappuccino.ts"
+// Written with love and a lot of coffee.
+
+export function brewCappuccino() {
+    // TODO: Add espresso shot and milk
+}
+```
+
+Leading and trailing whitespace of a text is trimmed, so the blank first line of the template literal does not end up in the file.
+
+## Priority
+
+If a global blueprint has the same `title`, the local one replaces it. Details are in [API reference](/configuration/api-reference/#priority-and-merging).

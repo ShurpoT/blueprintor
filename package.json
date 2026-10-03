@@ -1,0 +1,14 @@
+{
+    "name": "scaffolder-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "dev:ext": "npm run watch -w packages/vscode-extension",
+        "dev:docs": "npm run dev -w packages/docs-site",
+        "build:docs": "npm run build -w packages/docs-site",
+        "package:ext": "npm run package -w packages/vscode-extension"
+    }
+}

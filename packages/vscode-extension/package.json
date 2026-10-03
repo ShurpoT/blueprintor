@@ -1,0 +1,184 @@
+{
+    "name": "file-scaffolder",
+    "displayName": "File Scaffolder",
+    "description": "Create files and folders from your own templates with one command.",
+    "version": "0.0.1",
+    "publisher": "your-publisher-id",
+    "license": "MIT",
+    "icon": "images/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ShurpoT/file-scaffolder.git",
+        "directory": "packages/vscode-extension"
+    },
+    "bugs": {
+        "url": "https://github.com/ShurpoT/file-scaffolder/issues"
+    },
+    "homepage": "https://shurpot.github.io/file-scaffolder/",
+    "keywords": [
+        "scaffold",
+        "scaffolder",
+        "template",
+        "boilerplate",
+        "generator",
+        "blueprint",
+        "file",
+        "folder"
+    ],
+    "engines": {
+        "vscode": "^1.103.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "main": "./out/extension.js",
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": false,
+            "description": "File Scaffolder runs scaffolder.config.js from the workspace, which is executable code."
+        }
+    },
+    "contributes": {
+        "commands": [
+            {
+                "command": "scaffolder.run",
+                "title": "Run File Scaffolder...",
+                "icon": "$(package)"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "scaffolder.run",
+                    "when": "view == workbench.explorer.fileView",
+                    "group": "navigation"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "scaffolder.run",
+                    "when": "explorerResourceIsFolder",
+                    "group": "2_workspace"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "File Scaffolder",
+            "properties": {
+                "scaffolder.defaultConfig": {
+                    "type": "object",
+                    "default": {
+                        "blueprints": []
+                    },
+                    "markdownDescription": "Global blueprints. They are merged with `scaffolder.config.js`; on the same `title` the local blueprint wins.",
+                    "properties": {
+                        "blueprints": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "title",
+                                    "structure"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "variables": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "key"
+                                            ],
+                                            "properties": {
+                                                "key": {
+                                                    "type": "string",
+                                                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                                                },
+                                                "prompt": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "snippets": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "structure": {
+                                        "type": "object",
+                                        "properties": {
+                                            "files": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "name"
+                                                    ],
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "snippet": {
+                                                            "type": "string"
+                                                        },
+                                                        "content": {
+                                                            "anyOf": [
+                                                                {
+                                                                    "type": "string"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "folders": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "name"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "package": "vsce package --no-dependencies"
+    },
+    "devDependencies": {
+        "@types/node": "24.x",
+        "@types/vscode": "^1.103.0",
+        "typescript": "^6.0.3"
+    }
+}

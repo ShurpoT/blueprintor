@@ -1,0 +1,110 @@
+---
+title: File Scaffolder
+description: Create files and folders from your own templates in VS Code, with one command.
+template: splash
+hero:
+    tagline: Create files and folders from your own templates in VS Code. Describe the structure once, then generate it with a name.
+    actions:
+        - text: Get started
+          link: /file-scaffolder/installation/
+          icon: right-arrow
+        - text: How it works
+          link: /file-scaffolder/introduction/
+          variant: minimal
+        - text: GitHub
+          link: https://github.com/ShurpoT/file-scaffolder
+          icon: external
+          variant: minimal
+---
+
+import { Card, CardGrid, FileTree } from "@astrojs/starlight/components";
+
+{/* Video: place it here, right after the hero, when it is ready. */}
+
+## Why File Scaffolder
+
+<CardGrid>
+
+<Card title="Any structure" icon="document">
+
+Nested folders, several files, shared texts. A React component with styles and a test, a Python module, a Go package, task notes: whatever you create again and again.
+
+</Card>
+
+<Card title="Smart placeholders" icon="pencil">
+
+One input becomes `{name.pascal}`, `{name.camel}`, `{name.kebab}`, `{name.snake}` or `{name.raw}` in file names, folder names and content.
+
+</Card>
+
+<Card title="Global and local" icon="setting">
+
+Keep personal blueprints in VS Code settings and project blueprints in `scaffolder.config.js`. On the same title, the local one wins.
+
+</Card>
+
+<Card title="Safe by default" icon="approve-check">
+
+Everything is checked before writing, so a mistake in a config never leaves a half-created result. Existing files are never overwritten without asking.
+
+</Card>
+
+</CardGrid>
+
+## How it looks
+
+Describe a blueprint once:
+
+```js title="scaffolder.config.js"
+module.exports = {
+    blueprints: [
+        {
+            title: "Idea",
+            variables: [{ key: "name", prompt: "Idea name" }],
+            snippets: {
+                idea: `
+# {name.pascal}
+
+Notes go here.
+`,
+            },
+            structure: {
+                files: [{ name: "{name.kebab}.md", snippet: "idea" }],
+            },
+        },
+    ],
+};
+```
+
+Right-click a folder, choose **Run File Scaffolder...**, pick the blueprint and type `my idea`:
+
+<FileTree>
+
+- ideas
+    - **my-idea.md**
+
+</FileTree>
+
+## Where to go next
+
+<CardGrid>
+
+<Card title="Install" icon="rocket">
+
+[Install the extension](/installation/) from the Marketplace or a VSIX file.
+
+</Card>
+
+<Card title="Write a config" icon="puzzle">
+
+Start with a [local config](/configuration/local-config/) or the [field reference](/configuration/api-reference/).
+
+</Card>
+
+<Card title="Copy an example" icon="open-book">
+
+Ready-made blueprints for [React](/examples/react/), [Python](/examples/python/), [Go](/examples/go/), [C++](/examples/cpp/), [C#](/examples/csharp/) and [SQL](/examples/sql/).
+
+</Card>
+
+</CardGrid>
