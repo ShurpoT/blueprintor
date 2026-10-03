@@ -3,7 +3,7 @@ import starlight from "@astrojs/starlight";
 import { satteri } from "@astrojs/markdown-satteri";
 import { baseLinks } from "./plugins/base-links.mjs";
 
-const base = "/file-scaffolder";
+const base = "/blueprintor";
 
 export default defineConfig({
     site: "https://shurpot.github.io",
@@ -16,8 +16,8 @@ export default defineConfig({
 
     integrations: [
         starlight({
-            title: "📦 File Scaffolder",
-            social: [{ icon: "github", label: "GitHub", href: "https://github.com/ShurpoT/file-scaffolder" }],
+            title: "📦 Blueprintor",
+            social: [{ icon: "github", label: "GitHub", href: "https://github.com/ShurpoT/blueprintor" }],
 
             sidebar: [
                 {

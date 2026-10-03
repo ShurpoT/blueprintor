@@ -1,18 +1,18 @@
 ---
-title: File Scaffolder
+title: Blueprintor
 description: Create files and folders from your own templates in VS Code, with one command.
 template: splash
 hero:
     tagline: Create files and folders from your own templates in VS Code. Describe the structure once, then generate it with a name.
     actions:
         - text: Get started
-          link: /file-scaffolder/installation/
+          link: /blueprintor/installation/
           icon: right-arrow
         - text: How it works
-          link: /file-scaffolder/introduction/
+          link: /blueprintor/introduction/
           variant: minimal
         - text: GitHub
-          link: https://github.com/ShurpoT/file-scaffolder
+          link: https://github.com/ShurpoT/blueprintor
           icon: external
           variant: minimal
 ---
@@ -21,7 +21,7 @@ import { Card, CardGrid, FileTree } from "@astrojs/starlight/components";
 
 {/* Video: place it here, right after the hero, when it is ready. */}
 
-## Why File Scaffolder
+## Why Blueprintor
 
 <CardGrid>
 
@@ -39,7 +39,7 @@ One input becomes `{name.pascal}`, `{name.camel}`, `{name.kebab}`, `{name.snake}
 
 <Card title="Global and local" icon="setting">
 
-Keep personal blueprints in VS Code settings and project blueprints in `scaffolder.config.js`. On the same title, the local one wins.
+Keep personal blueprints in VS Code settings and project blueprints in `blueprintor.config.js`. On the same title, the local one wins.
 
 </Card>
 
@@ -55,7 +55,7 @@ Everything is checked before writing, so a mistake in a config never leaves a ha
 
 Describe a blueprint once:
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
     blueprints: [
         {
@@ -76,7 +76,7 @@ Notes go here.
 };
 ```
 
-Right-click a folder, choose **Run File Scaffolder...**, pick the blueprint and type `my idea`:
+Right-click a folder, choose **Run Blueprintor...**, pick the blueprint and type `my idea`:
 
 <FileTree>
 

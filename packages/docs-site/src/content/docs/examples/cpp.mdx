@@ -3,23 +3,23 @@ title: C++ class
 description: A class split into a header and a source file.
 ---
 
-import { FileTree, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { FileTree, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
 A blueprint that creates a C++ class in the common `include/` + `src/` layout. It asks for two values: the class name and the namespace.
 
 ## Config
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
-  blueprints: [
-    {
-      title: "C++ class",
-      variables: [
-        { key: "name", prompt: "Class name" },
-        { key: "ns", prompt: "Namespace" },
-      ],
-      snippets: {
-        header: `
+    blueprints: [
+        {
+            title: "C++ class",
+            variables: [
+                { key: "name", prompt: "Class name" },
+                { key: "ns", prompt: "Namespace" },
+            ],
+            snippets: {
+                header: `
 #pragma once
 
 namespace {ns.snake} {
@@ -31,7 +31,7 @@ public:
 
 }  // namespace {ns.snake}
 `,
-        source: `
+                source: `
 #include "{ns.snake}/{name.pascal}.hpp"
 
 namespace {ns.snake} {
@@ -40,26 +40,26 @@ void {name.pascal}::run() {}
 
 }  // namespace {ns.snake}
 `,
-      },
-      structure: {
-        folders: [
-          {
-            name: "include",
-            folders: [
-              {
-                name: "{ns.snake}",
-                files: [{ name: "{name.pascal}.hpp", snippet: "header" }],
-              },
-            ],
-          },
-          {
-            name: "src",
-            files: [{ name: "{name.pascal}.cpp", snippet: "source" }],
-          },
-        ],
-      },
-    },
-  ],
+            },
+            structure: {
+                folders: [
+                    {
+                        name: "include",
+                        folders: [
+                            {
+                                name: "{ns.snake}",
+                                files: [{ name: "{name.pascal}.hpp", snippet: "header" }],
+                            },
+                        ],
+                    },
+                    {
+                        name: "src",
+                        files: [{ name: "{name.pascal}.cpp", snippet: "source" }],
+                    },
+                ],
+            },
+        },
+    ],
 };
 ```
 
@@ -69,7 +69,7 @@ An include guard would need an uppercase form of the name, so the header uses `#
 
 <Steps>
 
-1. Right-click the project root in the Explorer and choose **Run File Scaffolder...**.
+1. Right-click the project root in the Explorer and choose **Run Blueprintor...**.
 
 2. Select **C++ class**.
 
@@ -82,11 +82,11 @@ An include guard would need an uppercase form of the name, so the header uses `#
 <FileTree>
 
 - my-project
-  - include
-    - **my_app**
-      - **HttpClient.hpp**
-  - src
-    - **HttpClient.cpp**
+    - include
+        - **my_app**
+            - **HttpClient.hpp**
+    - src
+        - **HttpClient.cpp**
 
 </FileTree>
 

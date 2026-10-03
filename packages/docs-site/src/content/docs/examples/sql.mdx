@@ -3,40 +3,40 @@ title: SQL migration
 description: A pair of up and down migration files for a new table.
 ---
 
-import { FileTree, Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+import { FileTree, Steps, Tabs, TabItem, Aside } from "@astrojs/starlight/components";
 
 A blueprint that creates a pair of migration files: one that creates a table and one that drops it. The migration number and the table name are entered when the blueprint runs.
 
 ## Config
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
-  blueprints: [
-    {
-      title: "SQL migration",
-      variables: [
-        { key: "version", prompt: "Migration number (e.g. 001)" },
-        { key: "table", prompt: "Table name (e.g. users)" },
-      ],
-      snippets: {
-        up: `
+    blueprints: [
+        {
+            title: "SQL migration",
+            variables: [
+                { key: "version", prompt: "Migration number (e.g. 001)" },
+                { key: "table", prompt: "Table name (e.g. users)" },
+            ],
+            snippets: {
+                up: `
 CREATE TABLE {table.snake} (
     id BIGINT PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 `,
-        down: `
+                down: `
 DROP TABLE IF EXISTS {table.snake};
 `,
-      },
-      structure: {
-        files: [
-          { name: "{version.raw}_create_{table.snake}.up.sql", snippet: "up" },
-          { name: "{version.raw}_create_{table.snake}.down.sql", snippet: "down" },
-        ],
-      },
-    },
-  ],
+            },
+            structure: {
+                files: [
+                    { name: "{version.raw}_create_{table.snake}.up.sql", snippet: "up" },
+                    { name: "{version.raw}_create_{table.snake}.down.sql", snippet: "down" },
+                ],
+            },
+        },
+    ],
 };
 ```
 
@@ -50,7 +50,7 @@ There is no placeholder for the current date or a counter, so the migration numb
 
 <Steps>
 
-1. Right-click your migrations folder (for example `db/migrations`) and choose **Run File Scaffolder...**.
+1. Right-click your migrations folder (for example `db/migrations`) and choose **Run Blueprintor...**.
 
 2. Select **SQL migration**.
 
@@ -63,9 +63,9 @@ There is no placeholder for the current date or a counter, so the migration numb
 <FileTree>
 
 - db
-  - migrations
-    - **001_create_users.up.sql**
-    - **001_create_users.down.sql**
+    - migrations
+        - **001_create_users.up.sql**
+        - **001_create_users.down.sql**
 
 </FileTree>
 

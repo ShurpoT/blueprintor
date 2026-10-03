@@ -3,20 +3,20 @@ title: Go package
 description: A package folder with a source file and a test.
 ---
 
-import { FileTree, Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+import { FileTree, Steps, Tabs, TabItem, Aside } from "@astrojs/starlight/components";
 
 A blueprint that creates a Go package folder with a source file and a test.
 
 ## Config
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
-  blueprints: [
-    {
-      title: "Go package",
-      variables: [{ key: "pkg", prompt: "Package name (lowercase, one word)" }],
-      snippets: {
-        source: `
+    blueprints: [
+        {
+            title: "Go package",
+            variables: [{ key: "pkg", prompt: "Package name (lowercase, one word)" }],
+            snippets: {
+                source: `
 package {pkg.raw}
 
 // Hello returns a greeting from the {pkg.raw} package.
@@ -24,7 +24,7 @@ func Hello() string {
 	return "hello from {pkg.raw}"
 }
 `,
-        test: `
+                test: `
 package {pkg.raw}
 
 import "testing"
@@ -36,20 +36,20 @@ func TestHello(t *testing.T) {
 	}
 }
 `,
-      },
-      structure: {
-        folders: [
-          {
-            name: "{pkg.raw}",
-            files: [
-              { name: "{pkg.raw}.go", snippet: "source" },
-              { name: "{pkg.raw}_test.go", snippet: "test" },
-            ],
-          },
-        ],
-      },
-    },
-  ],
+            },
+            structure: {
+                folders: [
+                    {
+                        name: "{pkg.raw}",
+                        files: [
+                            { name: "{pkg.raw}.go", snippet: "source" },
+                            { name: "{pkg.raw}_test.go", snippet: "test" },
+                        ],
+                    },
+                ],
+            },
+        },
+    ],
 };
 ```
 
@@ -63,7 +63,7 @@ A Go package name is lowercase, without hyphens or underscores. None of the case
 
 <Steps>
 
-1. Right-click the folder where the package should live (for example `internal`) and choose **Run File Scaffolder...**.
+1. Right-click the folder where the package should live (for example `internal`) and choose **Run Blueprintor...**.
 
 2. Select **Go package**.
 
@@ -76,9 +76,9 @@ A Go package name is lowercase, without hyphens or underscores. None of the case
 <FileTree>
 
 - internal
-  - greeter
-    - **greeter.go**
-    - **greeter_test.go**
+    - greeter
+        - **greeter.go**
+        - **greeter_test.go**
 
 </FileTree>
 

@@ -7,13 +7,13 @@ sidebar:
 
 import { FileTree, Aside, Tabs, TabItem } from "@astrojs/starlight/components";
 
-Global blueprints live in the VS Code setting `scaffolder.defaultConfig`. They are available in every workspace and are marked with 🌐 in the blueprint list.
+Global blueprints live in the VS Code setting `blueprintor.defaultConfig`. They are available in every workspace and are marked with 🌐 in the blueprint list.
 
-| Setting                    | Type     | Default                |
-| -------------------------- | -------- | ---------------------- |
-| `scaffolder.defaultConfig` | `object` | `{ "blueprints": [] }` |
+| Setting                     | Type     | Default                |
+| --------------------------- | -------- | ---------------------- |
+| `blueprintor.defaultConfig` | `object` | `{ "blueprints": [] }` |
 
-The default is an empty list: the extension ships without blueprints. If neither the settings nor `scaffolder.config.js` define any, running the command shows the error "No blueprints found".
+The default is an empty list: the extension ships without blueprints. If neither the settings nor `blueprintor.config.js` define any, running the command shows the error "No blueprints found".
 
 ## Where to edit
 
@@ -25,7 +25,7 @@ Open **Preferences: Open User Settings (JSON)** from the Command Palette and add
 
 ```jsonc title="settings.json"
 {
-    "scaffolder.defaultConfig": {
+    "blueprintor.defaultConfig": {
         "blueprints": [
             {
                 "title": "Markdown note",

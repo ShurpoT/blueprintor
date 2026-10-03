@@ -25,6 +25,6 @@ export interface Blueprint {
     structure: Structure;
 }
 
-export interface ScaffolderConfig {
+export interface BlueprintorConfig {
     blueprints: Blueprint[];
 }

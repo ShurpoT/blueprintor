@@ -3,25 +3,25 @@ title: Python module
 description: A module folder with a class and a pytest test.
 ---
 
-import { FileTree, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { FileTree, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
 
 A blueprint that creates a Python module folder with `__init__.py`, the module itself and a pytest test. Python module names are written in `snake_case`, so the file names use `{name.snake}`.
 
 ## Config
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
-  blueprints: [
-    {
-      title: "Python module",
-      variables: [{ key: "name", prompt: "Module name" }],
-      snippets: {
-        init: `
+    blueprints: [
+        {
+            title: "Python module",
+            variables: [{ key: "name", prompt: "Module name" }],
+            snippets: {
+                init: `
 from .{name.snake} import {name.pascal}
 
 __all__ = ["{name.pascal}"]
 `,
-        module: `
+                module: `
 """{name.raw}."""
 
 
@@ -31,28 +31,28 @@ class {name.pascal}:
     def __init__(self) -> None:
         pass
 `,
-        test: `
+                test: `
 from .{name.snake} import {name.pascal}
 
 
 def test_{name.snake}_can_be_created():
     assert {name.pascal}() is not None
 `,
-      },
-      structure: {
-        folders: [
-          {
-            name: "{name.snake}",
-            files: [
-              { name: "__init__.py", snippet: "init" },
-              { name: "{name.snake}.py", snippet: "module" },
-              { name: "test_{name.snake}.py", snippet: "test" },
-            ],
-          },
-        ],
-      },
-    },
-  ],
+            },
+            structure: {
+                folders: [
+                    {
+                        name: "{name.snake}",
+                        files: [
+                            { name: "__init__.py", snippet: "init" },
+                            { name: "{name.snake}.py", snippet: "module" },
+                            { name: "test_{name.snake}.py", snippet: "test" },
+                        ],
+                    },
+                ],
+            },
+        },
+    ],
 };
 ```
 
@@ -60,7 +60,7 @@ def test_{name.snake}_can_be_created():
 
 <Steps>
 
-1. Right-click the folder where the module should live (for example `src`) and choose **Run File Scaffolder...**.
+1. Right-click the folder where the module should live (for example `src`) and choose **Run Blueprintor...**.
 
 2. Select **Python module**.
 
@@ -73,10 +73,10 @@ def test_{name.snake}_can_be_created():
 <FileTree>
 
 - src
-  - my_idea
-    - **\_\_init\_\_.py**
-    - **my_idea.py**
-    - **test_my_idea.py**
+    - my_idea
+        - **\_\_init\_\_.py**
+        - **my_idea.py**
+        - **test_my_idea.py**
 
 </FileTree>
 

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import type { Blueprint, FileItem, ScaffolderConfig, Structure, Variable } from "../index";
+import type { Blueprint, FileItem, BlueprintorConfig, Structure, Variable } from "../index";
 
 type Origin = "global" | "local";
 
@@ -78,7 +78,7 @@ function extractBlueprints(config: unknown, origin: Origin, source: string): Loa
     if (!config || typeof config !== "object") {
         return [];
     }
-    const cfg = config as Partial<ScaffolderConfig> & { templates?: unknown };
+    const cfg = config as Partial<BlueprintorConfig> & { templates?: unknown };
     if (cfg.blueprints === undefined) {
         if (cfg.templates !== undefined) {
             vscode.window.showWarningMessage(`${source}: "templates" was renamed to "blueprints". Please update the config.`);
@@ -104,18 +104,18 @@ function clearProjectModuleCache(rootPath: string): void {
 }
 
 function getMergedBlueprints(rootPath: string): LoadedBlueprint[] {
-    const globalConfig = vscode.workspace.getConfiguration("scaffolder").get<unknown>("defaultConfig");
-    const globalBlueprints = extractBlueprints(globalConfig, "global", "scaffolder.defaultConfig");
+    const globalConfig = vscode.workspace.getConfiguration("blueprintor").get<unknown>("defaultConfig");
+    const globalBlueprints = extractBlueprints(globalConfig, "global", "blueprintor.defaultConfig");
 
     let localBlueprints: LoadedBlueprint[] = [];
-    const localConfigPath = path.join(rootPath, "scaffolder.config.js");
+    const localConfigPath = path.join(rootPath, "blueprintor.config.js");
     if (fs.existsSync(localConfigPath)) {
         try {
             clearProjectModuleCache(rootPath);
-            localBlueprints = extractBlueprints(require(localConfigPath), "local", "scaffolder.config.js");
+            localBlueprints = extractBlueprints(require(localConfigPath), "local", "blueprintor.config.js");
         } catch (e: unknown) {
             const message = e instanceof Error ? e.message : String(e);
-            vscode.window.showWarningMessage(`Failed to execute local scaffolder.config.js. Error: ${message}`);
+            vscode.window.showWarningMessage(`Failed to execute local blueprintor.config.js. Error: ${message}`);
         }
     }
 
@@ -312,7 +312,7 @@ async function resolveTargetFolder(uri: vscode.Uri | undefined, rootPath: string
 // ---------------------------------------------------------------------------
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposable = vscode.commands.registerCommand("scaffolder.run", async (uri?: vscode.Uri) => {
+    const disposable = vscode.commands.registerCommand("blueprintor.run", async (uri?: vscode.Uri) => {
         const workspaceFolders = vscode.workspace.workspaceFolders;
         if (!workspaceFolders || workspaceFolders.length === 0) {
             vscode.window.showErrorMessage("Please open a workspace folder first!");

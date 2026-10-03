@@ -1,16 +1,16 @@
 ---
 title: API reference
-description: Every field of the File Scaffolder config.
+description: Every field of the Blueprintor config.
 sidebar:
     order: 1
 ---
 
 import { FileTree, Aside } from "@astrojs/starlight/components";
 
-Global settings and `scaffolder.config.js` share one format.
+Global settings and `blueprintor.config.js` share one format.
 
 ```ts
-interface ScaffolderConfig {
+interface BlueprintorConfig {
     blueprints: Blueprint[];
 }
 ```
@@ -135,10 +135,10 @@ Placeholders work in file names, folder names and texts. A form is always requir
 
 Blueprints come from two places:
 
-| Source                            | Marker in the list |
-| --------------------------------- | ------------------ |
-| Local `scaffolder.config.js`      | 📦                 |
-| Global `scaffolder.defaultConfig` | 🌐                 |
+| Source                             | Marker in the list |
+| ---------------------------------- | ------------------ |
+| Local `blueprintor.config.js`      | 📦                 |
+| Global `blueprintor.defaultConfig` | 🌐                 |
 
 If both define a blueprint with the same `title` (compared exactly, case-sensitive), **the local one wins** and the global one is hidden. Blueprints with different titles are all shown. Blueprints are not merged field by field: the local one replaces the global one entirely.
 
@@ -171,7 +171,7 @@ The whole blueprint is checked before anything is written. If a check fails, you
 
 Two variables, a folder named after the first one:
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
     blueprints: [
         {

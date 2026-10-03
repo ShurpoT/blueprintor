@@ -1,20 +1,20 @@
 ---
 title: Local config
-description: Project blueprints in scaffolder.config.js.
+description: Project blueprints in blueprintor.config.js.
 sidebar:
     order: 3
 ---
 
 import { FileTree, Aside } from "@astrojs/starlight/components";
 
-A local config is a `scaffolder.config.js` file in the root of your workspace. It is the right place for blueprints that belong to a project, can be committed to the repository, and are marked with 📦 in the blueprint list.
+A local config is a `blueprintor.config.js` file in the root of your workspace. It is the right place for blueprints that belong to a project, can be committed to the repository, and are marked with 📦 in the blueprint list.
 
 ## Where to put it
 
 <FileTree>
 
 - your-project/
-    - **scaffolder.config.js**
+    - **blueprintor.config.js**
     - src
     - package.json
 
@@ -30,7 +30,7 @@ In a multi-root workspace the file is searched only in the **first** workspace f
 
 The file is loaded with `require`, so it must be a CommonJS module that exports an object with a `blueprints` array:
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 module.exports = {
     blueprints: [
         // blueprints, see the API reference
@@ -49,7 +49,7 @@ The shape of each blueprint is described in the [API reference](/configuration/a
 
 Shared constants and multi-line content are the main reasons to prefer a local config:
 
-```js title="scaffolder.config.js"
+```js title="blueprintor.config.js"
 const license = `// Written with love and a lot of coffee.`;
 
 module.exports = {

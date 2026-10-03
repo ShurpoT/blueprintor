@@ -1,5 +1,5 @@
 {
-    "name": "scaffolder-monorepo",
+    "name": "blueprintor-monorepo",
     "version": "1.0.0",
     "private": true,
     "workspaces": [

@@ -1,6 +1,6 @@
 {
-    "name": "file-scaffolder",
-    "displayName": "File Scaffolder",
+    "name": "blueprintor",
+    "displayName": "Blueprintor",
     "description": "Create files and folders from your own templates with one command.",
     "version": "0.0.1",
     "publisher": "ShurpoT",
@@ -8,16 +8,16 @@
     "icon": "images/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ShurpoT/file-scaffolder.git",
+        "url": "https://github.com/ShurpoT/file-blueprintor.git",
         "directory": "packages/vscode-extension"
     },
     "bugs": {
-        "url": "https://github.com/ShurpoT/file-scaffolder/issues"
+        "url": "https://github.com/ShurpoT/file-blueprintor/issues"
     },
-    "homepage": "https://shurpot.github.io/file-scaffolder/",
+    "homepage": "https://shurpot.github.io/file-blueprintor/",
     "keywords": [
         "scaffold",
-        "scaffolder",
+        "blueprintor",
         "template",
         "boilerplate",
         "generator",
@@ -35,42 +35,42 @@
     "capabilities": {
         "untrustedWorkspaces": {
             "supported": false,
-            "description": "File Scaffolder runs scaffolder.config.js from the workspace, which is executable code."
+            "description": "File Blueprintor runs blueprintor.config.js from the workspace, which is executable code."
         }
     },
     "contributes": {
         "commands": [
             {
-                "command": "scaffolder.run",
-                "title": "Run File Scaffolder...",
+                "command": "blueprintor.run",
+                "title": "Run Blueprintor...",
                 "icon": "$(package)"
             }
         ],
         "menus": {
             "view/title": [
                 {
-                    "command": "scaffolder.run",
+                    "command": "blueprintor.run",
                     "when": "view == workbench.explorer.fileView",
                     "group": "navigation"
                 }
             ],
             "explorer/context": [
                 {
-                    "command": "scaffolder.run",
+                    "command": "blueprintor.run",
                     "when": "explorerResourceIsFolder",
                     "group": "2_workspace"
                 }
             ]
         },
         "configuration": {
-            "title": "File Scaffolder",
+            "title": "File Blueprintor",
             "properties": {
-                "scaffolder.defaultConfig": {
+                "blueprintor.defaultConfig": {
                     "type": "object",
                     "default": {
                         "blueprints": []
                     },
-                    "markdownDescription": "Global blueprints. They are merged with `scaffolder.config.js`; on the same `title` the local blueprint wins.",
+                    "markdownDescription": "Global blueprints. They are merged with `blueprintor.config.js`; on the same `title` the local blueprint wins.",
                     "properties": {
                         "blueprints": {
                             "type": "array",

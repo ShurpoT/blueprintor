@@ -1,8 +1,8 @@
-# File Scaffolder
+# Blueprintor
 
 Create files and folders from your own templates in VS Code, with one command.
 
-- Documentation: https://shurpot.github.io/file-scaffolder/
+- Documentation: https://shurpot.github.io/blueprintor/
 - Extension: [`packages/vscode-extension`](packages/vscode-extension)
 - Docs site (Astro Starlight): [`packages/docs-site`](packages/docs-site)
 
