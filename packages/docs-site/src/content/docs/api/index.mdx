@@ -1,0 +1,100 @@
+---
+title: API reference
+description: Every field of the Blueprintor config, split by topic.
+sidebar:
+  label: Overview
+  order: 1
+---
+
+import { CardGrid, LinkCard, Aside } from "@astrojs/starlight/components";
+
+`settings.json` and `blueprintor.config.js` share one format.
+
+```ts
+interface BlueprintorConfig {
+  blueprints: Blueprint[];
+}
+```
+
+## Where the config lives
+
+| Config | Where                                                  | Marker in the list |
+| ------ | ------------------------------------------------------ | ------------------ |
+| Global | `blueprintor.defaultConfig` in VS Code `settings.json` | 🌐                 |
+| Local  | `blueprintor.config.js` in the root of the workspace   | 📦                 |
+
+The local file is a CommonJS module, so it can contain code (helpers, loops, `"x".repeat(3)`). `settings.json` is plain JSON: the same fields, but no code.
+
+{/* <Aside type="caution">`blueprintor.config.js` is executable code, so the extension does not run in untrusted workspaces.</Aside> */}
+
+## A complete example
+
+A blueprint with one variable, one snippet and one file. Local form:
+
+```js
+// blueprintor.config.js
+module.exports = {
+  blueprints: [
+    {
+      title: "React component",
+      variables: [{ key: "name", prompt: "Component name" }],
+      snippets: {
+        component: [
+          "export function {name.pascal}() {",
+          "  return (",
+          "    <div>",
+          "      <div></div>",
+          "    </div>",
+          "  )",
+          "}",
+        ],
+      },
+      structure: {
+        files: [{ name: "{name.pascal}.tsx", snippet: "component" }],
+      },
+    },
+  ],
+};
+```
+
+The same blueprint in `settings.json`:
+
+```json
+{
+  // ...
+
+  "blueprintor.defaultConfig": {
+    "blueprints": [
+      {
+        "title": "React component",
+        "variables": [{ "key": "name", "prompt": "Component name" }],
+        "snippets": {
+          "component": [
+            "export function {name.pascal}() {",
+            "  return (",
+            "    <div>",
+            "      <div></div>",
+            "    </div>",
+            "  )",
+            "}"
+          ]
+        },
+        "structure": {
+          "files": [{ "name": "{name.pascal}.tsx", "snippet": "component" }]
+        }
+      }
+    ]
+  }
+}
+```
+
+## Reference
+
+<CardGrid>
+  <LinkCard title="Blueprint" description="Fields, titles, priority and merging." href="./blueprint/" />
+  <LinkCard title="Variables" description="Questions asked before anything is created." href="./variables/" />
+  <LinkCard title="Snippets" description="Reusable texts for files." href="./snippets/" />
+  <LinkCard title="Files and folders" description="The structure to create and the rules for names." href="./structure/" />
+  <LinkCard title="Placeholders" description="Insert values in five forms." href="./placeholders/" />
+  <LinkCard title="Running a blueprint" description="What happens step by step, and every error." href="./running/" />
+</CardGrid>

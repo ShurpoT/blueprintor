@@ -1,0 +1,42 @@
+---
+title: Variables
+description: Values the extension asks for before creating anything, and how they are checked.
+sidebar:
+  order: 3
+---
+
+```ts
+interface Variable {
+  key: string;
+  prompt?: string;
+}
+```
+
+| Field    | Type     | Default                 | Description                                                                                                                                     |
+| -------- | -------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`    | `string` | required                | Name used in [placeholders](../placeholders/). Letters, digits and underscores, not starting with a digit. Must be unique within the blueprint. |
+| `prompt` | `string` | `Enter value for [key]` | Question shown in the input box. A blank prompt falls back to the default.                                                                      |
+
+Variables are asked in the order they are listed. The input box also shows the target folder.
+
+- `Esc` cancels the whole run, nothing is created.
+- Without `variables` nothing is asked and the blueprint runs immediately.
+- The keys are checked before the first question, so a broken blueprint fails right away.
+
+## Value check
+
+The input box checks every value before accepting it:
+
+- **A value is required.** An empty value, or one with only spaces, is rejected.
+- **Used with `pascal`, `camel`, `kebab` or `snake`:** only Latin letters, digits, spaces, `-` and `_` are allowed, and there must be at least one letter or digit. These forms silently drop every other character, so `23_-!@#$%^&?><*()` would turn into `23`. Instead of creating wrong names, the input box asks you to type the value again.
+- **Used only with `raw`:** any text is accepted.
+
+The extension looks for the variable in file and folder names, in `content` and in the snippets that files use.
+
+| Value          | Used with            | Result                                 |
+| -------------- | -------------------- | -------------------------------------- |
+| `user profile` | `.pascal`            | accepted                               |
+| `Fix: bug!`    | `.raw` only          | accepted                               |
+| `Fix: bug!`    | `.raw` and `.pascal` | rejected: `:` and `!` would be dropped |
+| `---`          | `.kebab`             | rejected: no letter or digit           |
+| `Привет`       | `.pascal`            | rejected: Cyrillic would be dropped    |

@@ -1,0 +1,41 @@
+---
+title: Blueprint
+description: The fields of a blueprint, how titles work and how global and local blueprints are merged.
+sidebar:
+  order: 2
+---
+
+```ts
+interface Blueprint {
+  title: string;
+  variables?: Variable[];
+  snippets?: Record<string, string | string[]>;
+  structure: Structure;
+}
+```
+
+| Field       | Type                                 | Default  | Description                                                                         |
+| ----------- | ------------------------------------ | -------- | ----------------------------------------------------------------------------------- |
+| `title`     | `string`                             | required | Name in the blueprint list. Also the key used to merge global and local blueprints. |
+| `variables` | `Variable[]`                         | none     | Values to ask for before creating anything. See [Variables](../variables/).         |
+| `snippets`  | `Record<string, string \| string[]>` | none     | Named texts that files can reference with `snippet`. See [Snippets](../snippets/).  |
+| `structure` | `Structure`                          | required | What to create inside the target folder. See [Files and folders](../structure/).    |
+
+## Title
+
+A blueprint is **ignored** when its title is missing, blank, or contains control characters (a tab or a line break inside the text). You see a warning with the number of ignored blueprints each time the list is loaded.
+
+Two blueprints with the same title in one config also produce a warning. The last one is used and the other is dropped.
+
+## Priority and merging
+
+Blueprints come from two places:
+
+| Source                             | Marker in the list |
+| ---------------------------------- | ------------------ |
+| Global `blueprintor.defaultConfig` | 🌐                 |
+| Local `blueprintor.config.js`      | 📦                 |
+
+If both define a blueprint with the same `title` (compared exactly after trimming, case-sensitive), **the local one wins** and the global one is hidden.
+
+Next to each title the list shows the keys of the variables that will be asked.

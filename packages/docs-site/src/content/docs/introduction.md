@@ -27,22 +27,22 @@ description: What Blueprintor is and how it works.
 
 ```js title="blueprintor.config.js"
 module.exports = {
-    blueprints: [
-        {
-            title: "Idea",
-            variables: [{ key: "name", prompt: "Idea name" }],
-            snippets: {
-                idea: `
+  blueprints: [
+    {
+      title: "Idea",
+      variables: [{ key: "name", prompt: "Idea name" }],
+      snippets: {
+        idea: `
 # {name.pascal}
 
 Notes go here.
 `,
-            },
-            structure: {
-                files: [{ name: "{name.kebab}.md", snippet: "idea" }],
-            },
-        },
-    ],
+      },
+      structure: {
+        files: [{ name: "{name.kebab}.md", snippet: "idea" }],
+      },
+    },
+  ],
 };
 ```
 

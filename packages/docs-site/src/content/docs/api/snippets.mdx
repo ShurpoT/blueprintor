@@ -1,0 +1,60 @@
+---
+title: Snippets
+description: Named texts that several files can share.
+sidebar:
+  order: 4
+---
+
+`snippets` is a map from a snippet name to its text. Files reference a snippet with `snippet`, so one text can be reused by several files.
+
+```ts
+snippets?: Record<string, string | string[]>;
+```
+
+- The text is a **string**, or an **array of strings** that is joined with a line break. Arrays are easier to read for anything longer than one line.
+- A **name** follows the same rule as a **variable key**: letters, digits and underscores, not starting with a digit (`header`, `page_2`). `my-snippet` or `not.$#/23` is an error, and `snippets` itself must be an object.
+- A snippet defined as an empty string is valid and produces an empty file.
+- Placeholders are substituted in the text. See [Placeholders](../placeholders/).
+- Names are checked when the blueprint runs, even for snippets that no file uses.
+
+## Example
+
+One snippet reused by two files, plus a one-line snippet:
+
+```js
+{
+  title: "Greeting module",
+  variables: [{ key: "name", prompt: "Module name" }],
+  snippets: {
+    header: "// Generated for {name.pascal}",
+    hello: [
+      "export function {name.camel}() {",
+      '  return "{name.raw}";',
+      "}",
+    ],
+  },
+  structure: {
+    files: [
+      { name: "{name.kebab}.ts", snippet: "hello" },
+      { name: "{name.kebab}.copy.ts", snippet: "hello" },
+      { name: "NOTE.txt", snippet: "header" },
+    ],
+  },
+}
+```
+
+With the value `user profile`, both `user-profile.ts` and `user-profile.copy.ts` get the same text:
+
+```ts title="user-profile.ts"
+export function userProfile() {
+  return "user profile";
+}
+```
+
+and `NOTE.txt` contains one line:
+
+```txt title="NOTE.txt"
+// Generated for UserProfile
+```
+
+For text that belongs to a single file, `content` is shorter. See [Files and folders](../structure/#how-file-content-is-chosen).

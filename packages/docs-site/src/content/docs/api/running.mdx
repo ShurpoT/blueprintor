@@ -1,0 +1,61 @@
+---
+title: Running a blueprint
+description: What happens when you run a blueprint, how existing files are handled and what every error means.
+sidebar:
+  order: 7
+---
+
+## Step by step
+
+1. **Target folder.** The folder you right-clicked in the Explorer. With the Explorer toolbar button, the selected item is used (the folder it is in, if it is a file), or the workspace root if nothing is selected. Only the first folder of a multi-root workspace is used as the root.
+2. **Choose a blueprint** from the list. See [Priority and merging](../blueprint/#priority-and-merging).
+3. **Variables and snippets are checked.** A broken blueprint fails here, before any question.
+4. **Questions** are asked one by one. Values are checked as you type. See [Value check](../variables/#value-check).
+5. **The whole plan is built and checked.** Names, duplicates and clashes with existing files and folders. Nothing is written yet.
+6. **Existing files.** If any file already exists, you choose what to do (see below).
+7. **Files are written.** A message tells how many files were created and how many were skipped.
+
+Because everything is checked before writing, a failed run never leaves a half-created structure.
+
+## Existing files
+
+Before writing, the extension checks which files already exist (folders are not checked). If there are any, a modal dialog offers:
+
+- **Overwrite**: replace them;
+- **Skip existing**: create only the missing files;
+- cancel: do nothing.
+
+## Errors
+
+If a check fails, you see "Generation failed" with the reason, and nothing is created.
+
+| Problem                                                 | Message                                                                                                  |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Invalid variable `key`                                  | `Invalid variable key "1abc" in blueprint "…". Use letters, digits and underscores; …`                   |
+| Duplicate variable `key`                                | `Duplicate variable key "name" in blueprint "…".`                                                        |
+| `variables` is not an array                             | `"variables" in blueprint "…" must be an array.`                                                         |
+| Invalid snippet name                                    | `Invalid snippet name "my-snippet" in blueprint "…". Use letters, digits and underscores; …`             |
+| `snippets` is not an object                             | `"snippets" in blueprint "…" must be an object.`                                                         |
+| `snippet` that is not defined in `snippets`             | `Snippet "x" used by file "a.txt" is not defined in blueprint "…".`                                      |
+| `snippet` and `content` in the same file                | `File "a.txt" has both "snippet" and "content". Use only one of them.`                                   |
+| Text that is not a string or an array of strings        | `"content" of file "a.txt" must be a string or an array of strings.` (or the same for a snippet)         |
+| `files` or `folders` is not an array                    | `"files" must be an array.`                                                                              |
+| File or folder without a `name`                         | `A file in the blueprint has no "name".`                                                                 |
+| Name that is not allowed                                | `Invalid file name "a/b.txt" (resolved to "a/b.txt").` followed by the reason. See [Names](../structure/#names). |
+| Two entries with one path                               | `"README.md" would be created twice (paths are compared without regard to letter case).`                 |
+| A file and a folder with one name                       | `"item" is used both as a file and as a folder.`                                                         |
+| A file where a folder is needed, or the other way round | `"blocker" already exists and is a folder.` (or `…and is a file.`)                                       |
+| No `structure`                                          | `Blueprint "…" has no "structure".`                                                                      |
+| No files or folders in `structure`                      | `Blueprint "…" defines no files or folders.`                                                             |
+
+## Warnings when the list is loaded
+
+These do not stop anything, but the blueprint they concern is not available.
+
+| Situation                                      | Warning                                                                                                    |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Blueprint with a missing, blank or invalid title | `N blueprint(s) ignored because "title" is missing, blank or contains control characters.`               |
+| Same title twice in one config                 | `duplicate blueprint title(s) "…". Only the last one of each is used.`                                    |
+| `blueprints` is not an array                   | `"blueprints" must be an array.`                                                                           |
+| Old `templates` key                            | `"templates" was renamed to "blueprints". Please update the config.`                                      |
+| `blueprintor.config.js` throws                 | `Failed to execute local blueprintor.config.js.` followed by the error. Global blueprints still work.     |

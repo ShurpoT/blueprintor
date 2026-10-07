@@ -11,12 +11,12 @@ A blueprint that creates a component folder with the component, CSS module, test
 
 ```js title="blueprintor.config.js"
 module.exports = {
-    blueprints: [
-        {
-            title: "React component",
-            variables: [{ key: "name", prompt: "Component name" }],
-            snippets: {
-                component: `
+  blueprints: [
+    {
+      title: "React component",
+      variables: [{ key: "name", prompt: "Component name" }],
+      snippets: {
+        component: `
 import styles from './{name.pascal}.module.css';
 import type { {name.pascal}Props } from './types';
 
@@ -24,12 +24,12 @@ export function {name.pascal}({ children }: {name.pascal}Props) {
   return <div className={styles.root}>{children}</div>;
 }
 `,
-                styles: `
+        styles: `
 .root {
   display: block;
 }
 `,
-                test: `
+        test: `
 import { render, screen } from '@testing-library/react';
 import { {name.pascal} } from './{name.pascal}';
 
@@ -40,34 +40,34 @@ describe('{name.pascal}', () => {
   });
 });
 `,
-                types: `
+        types: `
 import type { ReactNode } from 'react';
 
 export interface {name.pascal}Props {
   children?: ReactNode;
 }
 `,
-                index: `
+        index: `
 export { {name.pascal} } from './{name.pascal}';
 export type { {name.pascal}Props } from './types';
 `,
-            },
-            structure: {
-                folders: [
-                    {
-                        name: "{name.pascal}",
-                        files: [
-                            { name: "{name.pascal}.tsx", snippet: "component" },
-                            { name: "{name.pascal}.module.css", snippet: "styles" },
-                            { name: "{name.pascal}.test.tsx", snippet: "test" },
-                            { name: "types.ts", snippet: "types" },
-                            { name: "index.ts", snippet: "index" },
-                        ],
-                    },
-                ],
-            },
-        },
-    ],
+      },
+      structure: {
+        folders: [
+          {
+            name: "{name.pascal}",
+            files: [
+              { name: "{name.pascal}.tsx", snippet: "component" },
+              { name: "{name.pascal}.module.css", snippet: "styles" },
+              { name: "{name.pascal}.test.tsx", snippet: "test" },
+              { name: "types.ts", snippet: "types" },
+              { name: "index.ts", snippet: "index" },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 };
 ```
 
@@ -90,13 +90,13 @@ Braces that are not placeholders, such as `{children}` and `{styles.root}`, are 
 <FileTree>
 
 - src
-    - components
-        - **Button**
-            - **Button.tsx**
-            - **Button.module.css**
-            - **Button.test.tsx**
-            - **types.ts**
-            - **index.ts**
+  - components
+    - **Button**
+      - **Button.tsx**
+      - **Button.module.css**
+      - **Button.test.tsx**
+      - **types.ts**
+      - **index.ts**
 
 </FileTree>
 
@@ -111,7 +111,7 @@ import styles from "./Button.module.css";
 import type { ButtonProps } from "./types";
 
 export function Button({ children }: ButtonProps) {
-    return <div className={styles.root}>{children}</div>;
+  return <div className={styles.root}>{children}</div>;
 }
 ```
 
@@ -121,7 +121,7 @@ export function Button({ children }: ButtonProps) {
 
 ```css
 .root {
-    display: block;
+  display: block;
 }
 ```
 
@@ -134,10 +134,10 @@ import { render, screen } from "@testing-library/react";
 import { Button } from "./Button";
 
 describe("Button", () => {
-    it("renders children", () => {
-        render(<Button>Hello</Button>);
-        expect(screen.getByText("Hello")).toBeTruthy();
-    });
+  it("renders children", () => {
+    render(<Button>Hello</Button>);
+    expect(screen.getByText("Hello")).toBeTruthy();
+  });
 });
 ```
 
@@ -149,7 +149,7 @@ describe("Button", () => {
 import type { ReactNode } from "react";
 
 export interface ButtonProps {
-    children?: ReactNode;
+  children?: ReactNode;
 }
 ```
 

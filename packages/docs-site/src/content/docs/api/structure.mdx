@@ -1,0 +1,62 @@
+---
+title: Files and folders
+description: The structure a blueprint creates, how content is chosen and what names are allowed.
+sidebar:
+  order: 5
+---
+
+```ts
+interface Structure {
+  files?: FileItem[];
+  folders?: FolderItem[];
+}
+
+interface FolderItem extends Structure {
+  name: string;
+}
+
+interface FileItem {
+  name: string;
+  snippet?: string;
+  content?: string | string[];
+}
+```
+
+| Field     | Description                                             |
+| --------- | ------------------------------------------------------- |
+| `name`    | File or folder name. Placeholders are allowed.          |
+| `snippet` | Name of an entry in the blueprint's `snippets`.         |
+| `content` | Inline text of the file: a string or an array of lines. |
+
+Folders can be nested to any depth and are created if they don't exist. Describe nesting with `folders`, not with a path in `name`.
+
+## How file content is chosen
+
+1. If `snippet` is set, the file gets the text of that snippet.
+2. Otherwise, if `content` is set, the file gets its own `content`.
+3. Otherwise, the file is created empty.
+
+Use either `snippet` or `content` in one file, not both.
+
+## Names
+
+After placeholders are replaced and the spaces around the name are trimmed, a file or folder name must:
+
+- not be empty;
+- not be `.` or `..`;
+- not contain `/` or `\`: use `folders` for nesting (`src/a.ts` is not allowed);
+- not contain `<` `>` `:` `"` `|` `?` `*` or control characters;
+- not end with a dot;
+- not be longer than 255 characters.
+
+Most of these characters are only forbidden on Windows. The rules are the same on every system on purpose, so a blueprint that works for you also works for everyone else on the team. A leading dot is fine (`.gitignore`).
+
+## Duplicate names
+
+Everything the blueprint creates is checked before the first file is written:
+
+- Two files with the same path are an error. Paths are compared **without regard to letter case**, because Windows and macOS treat `Readme.md` and `README.md` as one file.
+- A file and a folder with the same name are an error.
+- The same folder listed twice is fine: its contents are merged.
+
+Files that already exist on disk are handled separately. See [Existing files](../running/#existing-files).

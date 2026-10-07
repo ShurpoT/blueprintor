@@ -1,0 +1,99 @@
+---
+title: Placeholders
+description: Insert variable values into names and texts in five forms.
+sidebar:
+  order: 6
+---
+
+import { FileTree, Tabs, TabItem } from "@astrojs/starlight/components";
+
+For every variable there are five forms:
+
+| Placeholder    | `my idea` | `user_profile` |
+| -------------- | --------- | -------------- |
+| `{key.raw}`    | `my idea` | `user_profile` |
+| `{key.pascal}` | `MyIdea`  | `UserProfile`  |
+| `{key.camel}`  | `myIdea`  | `userProfile`  |
+| `{key.kebab}`  | `my-idea` | `user-profile` |
+| `{key.snake}`  | `my_idea` | `user_profile` |
+
+Placeholders work in file names, folder names and texts. A form is always required: `{key}` on its own is not a placeholder, so code such as `{name}` in your templates is never touched by accident.
+
+- Words are split on spaces, hyphens, underscores and lower-to-upper transitions (`UserProfile` gives `user-profile`).
+- `pascal`, `camel`, `kebab` and `snake` keep only Latin letters, digits, spaces, `-` and `_`. Everything else (including Cyrillic) is removed. To stop this from creating wrong names, the input box rejects such values. See [Value check](../variables/#value-check).
+- `raw` inserts the value exactly as typed.
+
+## Example
+
+A blueprint that uses all five forms:
+
+```js
+{
+  title: "Feature",
+  variables: [{ key: "name", prompt: "Feature name" }],
+  structure: {
+    folders: [
+      {
+        name: "{name.kebab}",
+        files: [
+          {
+            name: "{name.pascal}.tsx",
+            content: [
+              "export function {name.pascal}() {",
+              '  return <section className="{name.kebab}">{name.raw}</section>;',
+              "}",
+            ],
+          },
+          {
+            name: "{name.camel}.ts",
+            content: ["// id: {name.snake}", 'export const {name.camel} = "{name.raw}";'],
+          },
+          {
+            name: "{name.kebab}.css",
+            content: [".{name.kebab} {", "  display: block;", "}"],
+          },
+        ],
+      },
+    ],
+  },
+}
+```
+
+With the value `user profile` it creates:
+
+<FileTree>
+
+- user-profile
+  - UserProfile.tsx
+  - userProfile.ts
+  - user-profile.css
+
+</FileTree>
+
+<Tabs>
+  <TabItem label="UserProfile.tsx" >
+  
+    ```tsx
+    export function UserProfile() {
+      return <section className="user-profile">user profile</section>;
+    }
+    ```
+</TabItem>
+  <TabItem label="userProfile.ts" >
+
+    ```ts
+    // id: user_profile
+    export const userProfile = "user profile";
+    ```
+
+  </TabItem>
+  <TabItem label="user-profile.css" >
+  
+    ```css
+    .user-profile {
+      display: block;
+    }
+    ```
+
+  </TabItem>
+</Tabs>

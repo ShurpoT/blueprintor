@@ -6,16 +6,14 @@ description: How to install Blueprintor in VS Code.
 import { Steps, Aside } from "@astrojs/starlight/components";
 
 <Aside title="Requirements">
-
-Visual Studio Code 1.103.0 or newer. A workspace folder must be open: the extension does nothing without one.
-
+  Visual Studio Code **1.103.0** or newer. A workspace folder must be open, as the extension operates within your project context.
 </Aside>
 
 ## From the Marketplace
 
 <Steps>
 
-1. Open the Extensions view: `Ctrl+Shift+X` (`Cmd+Shift+X` on macOS).
+1. Open the Extensions view in VS Code: `Ctrl+Shift+X` (`Cmd+Shift+X` on macOS).
 
 2. Search for **Blueprintor**.
 
@@ -25,29 +23,32 @@ Visual Studio Code 1.103.0 or newer. A workspace folder must be open: the extens
 
 ## From the command line
 
+If you prefer using your terminal, execute the installation command.
+
 ```bash
 code --install-extension ShurpoT.blueprintor
 ```
 
-## From a VSIX file
+<Aside type="caution">
+  For the best results, run this command in your **system terminal** (like Terminal or PowerShell) rather than the integrated
+  terminal inside VS Code, as the latter might sometimes spawn an empty window.
+</Aside>
 
-1. Open the Extensions view.
-2. Click `...` in the top right and choose **Install from VSIX...**.
-3. Select the downloaded file.
+## Verify Installation
 
-## Verify
+To check if the extension is active, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`) and search for **Run Blueprintor...**.
 
-Open the Command Palette (`Ctrl+Shift+P`) and look for **Run Blueprintor...**. The command is also available:
+You can trigger your blueprints from three different places:
 
-- in the context menu of a folder in the Explorer;
-- as a button in the Explorer view title.
+- 🖱️ **Context Menu:** Right-click any folder in the Explorer.
+- 📂 **Explorer Toolbar:** Click the Blueprintor icon at the top of the Explorer view.
+- ⌨️ **Command Palette:** Search for the run command directly.
 
-The extension has no default keybinding.
+<Aside type="tip" title="Where will the files be created?">
 
-<Aside type="tip" title="Which folder is the target?">
+The target folder for generation depends on how you launch the extension:
 
-From the context menu, the target is the folder you right-clicked.
-
-From the Explorer title button or the Command Palette, the target is the item currently selected in the Explorer (its parent folder, if it is a file). If that can't be determined, the workspace root is used.
+- **From the context menu:** Files are created inside the folder you right-clicked.
+- **From the Explorer button or Command Palette:** Files are created inside the currently highlighted folder (or the parent folder of the active file). If no item is selected, the **workspace root** is used as a fallback.
 
 </Aside>

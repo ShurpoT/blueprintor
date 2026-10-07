@@ -2,7 +2,7 @@
 title: Local config
 description: Project blueprints in blueprintor.config.js.
 sidebar:
-    order: 3
+  order: 3
 ---
 
 import { FileTree, Aside } from "@astrojs/starlight/components";
@@ -14,9 +14,9 @@ A local config is a `blueprintor.config.js` file in the root of your workspace. 
 <FileTree>
 
 - your-project/
-    - **blueprintor.config.js**
-    - src
-    - package.json
+  - **blueprintor.config.js**
+  - src
+  - package.json
 
 </FileTree>
 
@@ -32,9 +32,9 @@ The file is loaded with `require`, so it must be a CommonJS module that exports 
 
 ```js title="blueprintor.config.js"
 module.exports = {
-    blueprints: [
-        // blueprints, see the API reference
-    ],
+  blueprints: [
+    // blueprints, see the API reference
+  ],
 };
 ```
 
@@ -53,42 +53,43 @@ Shared constants and multi-line content are the main reasons to prefer a local c
 const license = `// Written with love and a lot of coffee.`;
 
 module.exports = {
-    blueprints: [
-        {
-            title: "Utility function",
-            variables: [{ key: "name", prompt: "Function name" }],
-            snippets: {
-                util: `
+  blueprints: [
+    {
+      title: "Utility function",
+      variables: [{ key: "name", prompt: "Function name" }],
+      snippets: {
+        util: `
 ${license}
 
 // {name.raw}
 export function brew{name.pascal}() {
     // TODO: Add espresso shot and milk
 }`,
-            },
-            structure: {
-                files: [{ name: "{name.camel}.ts", snippet: "util" }],
-            },
-        },
-    ],
+      },
+      structure: {
+        files: [{ name: "brew{name.camel}.ts", snippet: "util" }],
+      },
+    },
+  ],
 };
 ```
 
-Run it on `src/utils` and enter `format date`:
+Run it on `src/utils` and enter `cappuccino` as the function name:
 
 <FileTree>
 
-- src
-    - utils
-        - **brewCappuccino.ts**
+- src/
+  - utils/
+    - **brewCappuccino.ts**
 
 </FileTree>
 
-```ts title="brewCappuccino.ts"
+```ts title="src/utils/brewCappuccino.ts"
 // Written with love and a lot of coffee.
 
+// cappuccino
 export function brewCappuccino() {
-    // TODO: Add espresso shot and milk
+  // TODO: Add espresso shot and milk
 }
 ```
 

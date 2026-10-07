@@ -2,10 +2,10 @@
 title: Global settings
 description: Blueprints available in every project via VS Code settings.
 sidebar:
-    order: 2
+  order: 2
 ---
 
-import { FileTree, Aside, Tabs, TabItem } from "@astrojs/starlight/components";
+import { FileTree, Aside, Tabs, TabItem, Steps } from "@astrojs/starlight/components";
 
 Global blueprints live in the VS Code setting `blueprintor.defaultConfig`. They are available in every workspace and are marked with 🌐 in the blueprint list.
 
@@ -19,63 +19,68 @@ The default is an empty list: the extension ships without blueprints. If neither
 
 Open **Preferences: Open User Settings (JSON)** from the Command Palette and add the setting to `settings.json`. The setting can also be placed in workspace settings. VS Code offers completion and validation for the fields.
 
-## Texts as arrays of lines
+## Texts as arrays of line
 
-`settings.json` is JSON, which has no multi-line strings. Write the text of a snippet (or of a file's inline `content`) as an **array of strings**: each element is one line, and the lines are joined with a line break.
+<Steps>
 
-```jsonc title="settings.json"
-{
-    "blueprintor.defaultConfig": {
-        "blueprints": [
-            {
-                "title": "Markdown note",
-                "variables": [{ "key": "name", "prompt": "Note title" }],
-                "snippets": {
-                    "note": ["# {name.pascal}", "", "Write here."],
-                },
-                "structure": {
-                    "files": [
-                        { "name": "{name.kebab}.md", "snippet": "note" },
-                        { "name": "{name.kebab}.todo.md", "content": ["- [ ] {name.raw}"] },
-                    ],
-                },
-            },
-        ],
-    },
-}
-```
+1. `settings.json` is JSON, which has no multi-line strings. Write the text of a snippet (or of a file's inline `content`) as an **array of strings**: each element is one line, and the lines are joined with a line break.
 
-Run it on a folder and enter `weekly review`:
+   ```jsonc title="settings.json"
+   {
+     "blueprintor.defaultConfig": {
+       "blueprints": [
+         {
+           "title": "Markdown note",
+           "variables": [{ "key": "name", "prompt": "Note title" }],
+           "snippets": {
+             "note": ["# {name.pascal}", "", "Write here."],
+           },
+           "structure": {
+             "files": [
+               { "name": "{name.kebab}.md", "snippet": "note" },
+               { "name": "{name.kebab}.todo.md", "content": ["- [ ] {name.raw}"] },
+             ],
+           },
+         },
+       ],
+     },
+   }
+   ```
 
-<FileTree>
+2. Run it on a folder and enter `weekly review`:
 
-- notes
-    - **weekly-review.md**
-    - **weekly-review.todo.md**
+   <FileTree>
+                                           - notes
+                                             - **weekly-review.md**
+                                             - **weekly-review.todo.md**
 
-</FileTree>
+   </FileTree>
 
-<Tabs>
+3. Result
 
-<TabItem label="weekly-review.md">
+     <Tabs>
 
-```md
-# WeeklyReview
+     <TabItem label="weekly-review.md">
 
-Write here.
-```
+   ```md
+   # WeeklyReview
 
-</TabItem>
+   Write here.
+   ```
 
-<TabItem label="weekly-review.todo.md">
+     </TabItem>
 
-```md
-- [ ] weekly review
-```
+     <TabItem label="weekly-review.todo.md">
 
-</TabItem>
+   ```md
+   - [ ] weekly review
+   ```
 
-</Tabs>
+     </TabItem>
+
+     </Tabs>
+
+</Steps>
 
 <Aside type="tip">
 

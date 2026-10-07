@@ -1,0 +1,131 @@
+---
+title: HTML and CSS
+description: A page with its stylesheet in a new folder.
+sidebar:
+  order: 2
+---
+
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
+
+## Blueprint
+
+```js
+{
+  title: "HTML + CSS page",
+  variables: [{ key: "name", prompt: "Page name" }],
+  snippets: {
+    page: [
+      "<!DOCTYPE html>",
+      '<html lang="en">',
+      "  <head>",
+      '    <meta charset="UTF-8" />',
+      '    <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
+      "    <title>{name.raw}</title>",
+      '    <link rel="stylesheet" href="style.css" />',
+      "  </head>",
+      "  <body>",
+      '    <main class="{name.kebab}">',
+      "      <h1>{name.raw}</h1>",
+      "    </main>",
+      "  </body>",
+      "</html>",
+    ],
+    style: [
+      "html {",
+      "  box-sizing: border-box;",
+      "}",
+      "",
+      "*,",
+      "*::before,",
+      "*::after {",
+      "  box-sizing: inherit;",
+      "  padding: 0;",
+      "  margin: 0;",
+      "}",
+      "",
+      "body {",
+      "  font-family: sans-serif;",
+      "}",
+      "",
+      ".{name.kebab} {",
+      "  max-width: 40rem;",
+      "  margin: 0 auto;",
+      "  padding: 2rem;",
+      "}",
+    ],
+  },
+  structure: {
+    folders: [
+      {
+        name: "{name.kebab}",
+        files: [
+          { name: "index.html", snippet: "page" },
+          { name: "style.css", snippet: "style" },
+        ],
+      },
+    ],
+  },
+}
+```
+
+### Result
+
+Enter `Landing page`:
+
+<FileTree>
+
+- landing-page
+  - index.html
+  - style.css
+
+</FileTree>
+
+<Tabs>
+<TabItem label="index.html">
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing page</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="landing-page">
+      <h1>Landing page</h1>
+    </main>
+  </body>
+</html>
+```
+
+</TabItem>
+<TabItem label="style.css">
+
+```css
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+.landing-page {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem;
+}
+```
+
+</TabItem>
+</Tabs>

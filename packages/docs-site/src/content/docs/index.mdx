@@ -3,23 +3,23 @@ title: Blueprintor
 description: Create files and folders from your own templates in VS Code, with one command.
 template: splash
 hero:
-    tagline: Create files and folders from your own templates in VS Code. Describe the structure once, then generate it with a name.
-    image:
-        file: "../../assets/icon-128.svg"
-    actions:
-        - text: Get started
-          link: /blueprintor/installation/
-          icon: right-arrow
-        - text: How it works
-          link: /blueprintor/introduction/
-          variant: minimal
-        - text: GitHub
-          link: https://github.com/ShurpoT/blueprintor
-          icon: external
-          variant: minimal
+  tagline: Create files and folders from your own templates in VS Code. Describe the structure once, then generate it with a single click.
+  image:
+    file: "../../assets/icon-128.svg"
+  actions:
+    - text: Get started
+      link: /blueprintor/installation/
+      icon: right-arrow
+    - text: How it works
+      link: /blueprintor/introduction/
+      variant: minimal
+    - text: GitHub
+      link: https://github.com/ShurpoT/blueprintor
+      icon: external
+      variant: minimal
 ---
 
-import { Card, CardGrid, FileTree } from "@astrojs/starlight/components";
+import { Card, CardGrid, FileTree, Badge } from "@astrojs/starlight/components";
 
 ## Why Blueprintor
 
@@ -27,83 +27,52 @@ import { Card, CardGrid, FileTree } from "@astrojs/starlight/components";
 
 <Card title="Any structure" icon="document">
 
-Nested folders, several files, shared texts. A React component with styles and a test, a Python module, a Go package, task notes: whatever you create again and again.
+Generate complex boilerplates instantly. Build templates with nested folders, multiple files, and predefined text.
+
+Perfect for anything you create again and again:
+
+<FileTree >
+
+- src/
+  - components/
+    - Button/
+      - Button.tsx
+      - Button.test.tsx
+      - styles/
+        - button.module.css
+      - index.ts
+
+</FileTree>
 
 </Card>
 
 <Card title="Smart placeholders" icon="pencil">
+  One input automatically adapts to any naming convention in your file names, folder names, and content:
 
-One input becomes `{name.pascal}`, `{name.camel}`, `{name.kebab}`, `{name.snake}` or `{name.raw}` in file names, folder names and content.
+<Badge text="{name.raw}" variant="danger" size="medium" /> — Original input as typed
+
+<Badge text="{name.camel}" variant="caution" size="medium" /> — camelCase (`myComponent`)
+
+<Badge text="{name.pascal}" variant="success" size="medium" /> — PascalCase (`MyComponent`)
+
+<Badge text="{name.kebab}" variant="note" size="medium" /> — kebab-case (`my-component`)
+
+<Badge text="{name.snake}" variant="tip" size="medium" /> — snake_case (`my_component`)
 
 </Card>
 
 <Card title="Global and local" icon="setting">
 
-Keep personal blueprints in VS Code settings and project blueprints in `blueprintor.config.js`. On the same title, the local one wins.
+Manage blueprints at two levels with automatic merging:
+
+- **Global:** Saved directly in your VS Code `settings.json` for all projects.
+- **Local:** Saved in `blueprintor.config.js` in the project root (**takes priority** if names collide).
 
 </Card>
 
 <Card title="Safe by default" icon="approve-check">
 
 Everything is checked before writing, so a mistake in a config never leaves a half-created result. Existing files are never overwritten without asking.
-
-</Card>
-
-</CardGrid>
-
-## How it looks
-
-Describe a blueprint once:
-
-```js title="blueprintor.config.js"
-module.exports = {
-    blueprints: [
-        {
-            title: "Idea",
-            variables: [{ key: "name", prompt: "Idea name" }],
-            snippets: {
-                idea: `
-# {name.pascal}
-
-Notes go here.
-`,
-            },
-            structure: {
-                files: [{ name: "{name.kebab}.md", snippet: "idea" }],
-            },
-        },
-    ],
-};
-```
-
-Right-click a folder, choose **Run Blueprintor...**, pick the blueprint and type `my idea`:
-
-<FileTree>
-
-- ideas
-    - **my-idea.md**
-
-</FileTree>
-
-## Where to go next
-
-<CardGrid>
-
-<Card title="Install" icon="rocket">
-
-[Install the extension](/installation/) from the Marketplace or a VSIX file.
-
-</Card>
-
-<Card title="Write a config" icon="puzzle">
-
-Start with a [local config](/configuration/local-config/) or the [field reference](/configuration/api-reference/).
-
-</Card>
-
-<Card title="Copy an example" icon="open-book">
-
-Ready-made blueprints for [React](/examples/react/), [Python](/examples/python/), [Go](/examples/go/), [C++](/examples/cpp/), [C#](/examples/csharp/) and [SQL](/examples/sql/).
 
 </Card>
 
