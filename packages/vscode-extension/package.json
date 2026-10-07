@@ -2,19 +2,19 @@
     "name": "blueprintor",
     "displayName": "Blueprintor",
     "description": "Create files and folders from your own templates with one command.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "ShurpoT",
     "license": "MIT",
     "icon": "images/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ShurpoT/file-blueprintor.git",
+        "url": "https://github.com/ShurpoT/blueprintor.git",
         "directory": "packages/vscode-extension"
     },
     "bugs": {
-        "url": "https://github.com/ShurpoT/file-blueprintor/issues"
+        "url": "https://github.com/ShurpoT/blueprintor/issues"
     },
-    "homepage": "https://shurpot.github.io/file-blueprintor/",
+    "homepage": "https://shurpot.github.io/blueprintor/",
     "keywords": [
         "scaffold",
         "blueprintor",
@@ -82,7 +82,10 @@
                                 ],
                                 "properties": {
                                     "title": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "pattern": "^\\s*[^\\u0000-\\u001F\\u007F\\s](?:[^\\u0000-\\u001F\\u007F]*[^\\u0000-\\u001F\\u007F\\s])?\\s*$",
+                                        "patternErrorMessage": "The title must not be blank or contain control characters.",
+                                        "markdownDescription": "Name in the blueprint list. Also the key used to merge global and local blueprints."
                                     },
                                     "variables": {
                                         "type": "array",
@@ -94,7 +97,8 @@
                                             "properties": {
                                                 "key": {
                                                     "type": "string",
-                                                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                                                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+                                                    "patternErrorMessage": "Use letters, digits and underscores; must not start with a digit."
                                                 },
                                                 "prompt": {
                                                     "type": "string"
@@ -104,6 +108,11 @@
                                     },
                                     "snippets": {
                                         "type": "object",
+                                        "markdownDescription": "Named texts that files can reference with `snippet`. Names follow the same rule as variable keys.",
+                                        "propertyNames": {
+                                            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+                                            "patternErrorMessage": "Use letters, digits and underscores; must not start with a digit."
+                                        },
                                         "additionalProperties": {
                                             "anyOf": [
                                                 {
@@ -130,7 +139,9 @@
                                                     ],
                                                     "properties": {
                                                         "name": {
-                                                            "type": "string"
+                                                            "type": "string",
+                                                            "pattern": "^[^<>:\"|?*\\u0000-\\u001F/\\\\]+$",
+                                                            "patternErrorMessage": "Names must not contain / \\ < > : \" | ? * or control characters. Use \"folders\" for nesting."
                                                         },
                                                         "snippet": {
                                                             "type": "string"
@@ -157,7 +168,52 @@
                                                     "type": "object",
                                                     "required": [
                                                         "name"
-                                                    ]
+                                                    ],
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "pattern": "^[^<>:\"|?*\\u0000-\\u001F/\\\\]+$",
+                                                            "patternErrorMessage": "Names must not contain / \\ < > : \" | ? * or control characters. Use \"folders\" for nesting."
+                                                        },
+                                                        "files": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "required": [
+                                                                    "name"
+                                                                ],
+                                                                "properties": {
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "pattern": "^[^<>:\"|?*\\u0000-\\u001F/\\\\]+$",
+                                                                        "patternErrorMessage": "Names must not contain / \\ < > : \" | ? * or control characters. Use \"folders\" for nesting."
+                                                                    },
+                                                                    "snippet": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "content": {
+                                                                        "anyOf": [
+                                                                            {
+                                                                                "type": "string"
+                                                                            },
+                                                                            {
+                                                                                "type": "array",
+                                                                                "items": {
+                                                                                    "type": "string"
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "folders": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

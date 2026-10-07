@@ -12,10 +12,6 @@ interface LoadedBlueprint {
 
 type PlanEntry = { kind: "dir"; path: string } | { kind: "file"; path: string; content: string };
 
-// ---------------------------------------------------------------------------
-// Case conversion and placeholders
-// ---------------------------------------------------------------------------
-
 function splitWords(str: string): string[] {
     return str
         .replace(/[^a-zA-Z0-9\s_-]/g, "")
@@ -70,9 +66,18 @@ function replacePlaceholders(text: string, values: Record<string, string>): stri
     });
 }
 
-// ---------------------------------------------------------------------------
-// Blueprint loading
-// ---------------------------------------------------------------------------
+const CONTROL_CHARS = /[\u0000-\u001F\u007F]/;
+
+function normalizeTitle(title: unknown): string | undefined {
+    if (typeof title !== "string") {
+        return undefined;
+    }
+    const trimmed = title.trim();
+    if (trimmed === "" || CONTROL_CHARS.test(trimmed)) {
+        return undefined;
+    }
+    return trimmed;
+}
 
 function extractBlueprints(config: unknown, origin: Origin, source: string): LoadedBlueprint[] {
     if (!config || typeof config !== "object") {
@@ -89,9 +94,35 @@ function extractBlueprints(config: unknown, origin: Origin, source: string): Loa
         vscode.window.showWarningMessage(`${source}: "blueprints" must be an array.`);
         return [];
     }
-    return cfg.blueprints
-        .filter((b) => b && typeof b.title === "string" && b.title !== "")
-        .map((blueprint) => ({ blueprint, origin }));
+
+    const result: LoadedBlueprint[] = [];
+    const seen = new Set<string>();
+    const duplicates = new Set<string>();
+    let ignored = 0;
+
+    for (const item of cfg.blueprints) {
+        const title = item && typeof item === "object" ? normalizeTitle(item.title) : undefined;
+        if (title === undefined) {
+            ignored++;
+            continue;
+        }
+        if (seen.has(title)) {
+            duplicates.add(title);
+        }
+        seen.add(title);
+        result.push({ blueprint: { ...item, title }, origin });
+    }
+
+    if (ignored > 0) {
+        vscode.window.showWarningMessage(
+            `${source}: ${ignored} blueprint(s) ignored because "title" is missing, blank or contains control characters.`,
+        );
+    }
+    if (duplicates.size > 0) {
+        const list = Array.from(duplicates, (t) => JSON.stringify(t)).join(", ");
+        vscode.window.showWarningMessage(`${source}: duplicate blueprint title(s) ${list}. Only the last one of each is used.`);
+    }
+    return result;
 }
 
 function clearProjectModuleCache(rootPath: string): void {
@@ -119,17 +150,12 @@ function getMergedBlueprints(rootPath: string): LoadedBlueprint[] {
         }
     }
 
-    // Same title: the local blueprint replaces the global one.
     const merged = new Map<string, LoadedBlueprint>();
     for (const item of [...globalBlueprints, ...localBlueprints]) {
         merged.set(item.blueprint.title, item);
     }
     return Array.from(merged.values());
 }
-
-// ---------------------------------------------------------------------------
-// Validation and planning
-// ---------------------------------------------------------------------------
 
 const KEY_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -158,6 +184,111 @@ function readVariables(blueprint: Blueprint): Variable[] {
     return raw;
 }
 
+function checkSnippets(blueprint: Blueprint): void {
+    const snippets = blueprint.snippets;
+    if (snippets === undefined) {
+        return;
+    }
+    if (typeof snippets !== "object" || snippets === null || Array.isArray(snippets)) {
+        throw new Error(`"snippets" in blueprint "${blueprint.title}" must be an object.`);
+    }
+    for (const name of Object.keys(snippets)) {
+        if (!KEY_PATTERN.test(name)) {
+            throw new Error(
+                `Invalid snippet name ${JSON.stringify(name)} in blueprint "${blueprint.title}". ` +
+                    `Use letters, digits and underscores; the name must not start with a digit.`,
+            );
+        }
+    }
+}
+const CASE_FORMS = {
+    pascal: toPascalCase,
+    camel: toCamelCase,
+    kebab: toKebabCase,
+    snake: toSnakeCase,
+};
+
+type CaseForm = keyof typeof CASE_FORMS;
+
+const CASE_SAFE_VALUE = /^[A-Za-z0-9\s_-]*$/;
+
+function collectUsedForms(blueprint: Blueprint): Map<string, Set<CaseForm>> {
+    const used = new Map<string, Set<CaseForm>>();
+
+    const scan = (value: unknown): void => {
+        const text = textOf(value);
+        if (text === undefined) {
+            return;
+        }
+        for (const match of text.matchAll(PLACEHOLDER)) {
+            const key = match[1];
+            const form = match[2];
+            if (key === undefined || form === undefined || !(form in CASE_FORMS)) {
+                continue;
+            }
+            const forms = used.get(key) ?? new Set<CaseForm>();
+            forms.add(form as CaseForm);
+            used.set(key, forms);
+        }
+    };
+
+    const walk = (node: unknown): void => {
+        if (!node || typeof node !== "object") {
+            return;
+        }
+        const { files, folders } = node as Structure;
+        if (Array.isArray(files)) {
+            for (const file of files) {
+                if (!file || typeof file !== "object") {
+                    continue;
+                }
+                scan(file.name);
+                scan(file.content);
+                const snippets = blueprint.snippets;
+                if (
+                    typeof file.snippet === "string" &&
+                    snippets &&
+                    Object.prototype.hasOwnProperty.call(snippets, file.snippet)
+                ) {
+                    scan(snippets[file.snippet]);
+                }
+            }
+        }
+        if (Array.isArray(folders)) {
+            for (const folder of folders) {
+                if (!folder || typeof folder !== "object") {
+                    continue;
+                }
+                scan(folder.name);
+                walk(folder);
+            }
+        }
+    };
+
+    walk(blueprint.structure);
+    return used;
+}
+
+function checkValue(input: string, forms: Set<CaseForm> | undefined): string | undefined {
+    const value = input.trim();
+    if (value === "") {
+        return "A value is required";
+    }
+    if (forms === undefined || forms.size === 0) {
+        return undefined;
+    }
+    const list = Array.from(forms, (form) => `.${form}`).join(", ");
+    if (!CASE_SAFE_VALUE.test(value)) {
+        return `Only Latin letters, digits, spaces, "_" and "-" are allowed: this value is used with ${list}, which would drop other characters.`;
+    }
+    for (const form of forms) {
+        if (CASE_FORMS[form](value) === "") {
+            return `The value must contain at least one Latin letter or digit (it is used with ${list}).`;
+        }
+    }
+    return undefined;
+}
+
 function textOf(value: unknown): string | undefined {
     if (typeof value === "string") {
         return value;
@@ -178,17 +309,39 @@ function listOf<T>(value: T[] | undefined, what: string): T[] {
     return value;
 }
 
+const FORBIDDEN_NAME_CHARS = /[<>:"|?*\u0000-\u001F]/;
+const MAX_NAME_LENGTH = 255;
+
+function nameProblem(name: string): string | undefined {
+    if (name === "") {
+        return "The name is empty. The value probably has no Latin letters or digits (.pascal, .camel, .kebab and .snake drop other characters).";
+    }
+    if (name === "." || name === "..") {
+        return 'A name cannot be "." or "..".';
+    }
+    if (/[\\/]/.test(name)) {
+        return 'Names must not contain slashes: use "folders" for nesting.';
+    }
+    if (FORBIDDEN_NAME_CHARS.test(name)) {
+        return 'Names must not contain < > : " | ? * or control characters (they are not allowed in file names on Windows).';
+    }
+    if (name.endsWith(".")) {
+        return "Names must not end with a dot (not allowed on Windows).";
+    }
+    if (name.length > MAX_NAME_LENGTH) {
+        return `Names must not be longer than ${MAX_NAME_LENGTH} characters.`;
+    }
+    return undefined;
+}
+
 function resolveName(rawName: unknown, values: Record<string, string>, what: "file" | "folder"): string {
     if (typeof rawName !== "string" || rawName.trim() === "") {
         throw new Error(`A ${what} in the blueprint has no "name".`);
     }
     const name = replacePlaceholders(rawName, values).trim();
-    if (name === "" || name === "." || name === ".." || /[\\/]/.test(name)) {
-        const hint =
-            name === ""
-                ? " The value probably has no Latin letters or digits (.pascal, .camel, .kebab and .snake drop other characters)."
-                : ' Names must not contain slashes: use "folders" for nesting.';
-        throw new Error(`Invalid ${what} name "${rawName}" (resolved to "${name}").${hint}`);
+    const problem = nameProblem(name);
+    if (problem !== undefined) {
+        throw new Error(`Invalid ${what} name "${rawName}" (resolved to "${name}"). ${problem}`);
     }
     return name;
 }
@@ -220,7 +373,6 @@ function resolveContent(file: FileItem, blueprint: Blueprint, values: Record<str
             throw new Error(`"content" of file "${file.name}" must be a string or an array of strings.`);
         }
     }
-
     return replacePlaceholders(raw ?? "", values).trim();
 }
 
@@ -244,6 +396,24 @@ function buildPlan(
 }
 
 function checkPlan(plan: PlanEntry[], rootPath: string): void {
+    const seen = new Map<string, PlanEntry>();
+    for (const entry of plan) {
+        const key = entry.path.toLowerCase();
+        const previous = seen.get(key);
+        if (previous === undefined) {
+            seen.set(key, entry);
+            continue;
+        }
+        if (previous.kind === "dir" && entry.kind === "dir" && previous.path === entry.path) {
+            continue;
+        }
+        const rel = path.relative(rootPath, entry.path);
+        if (previous.kind !== entry.kind) {
+            throw new Error(`"${rel}" is used both as a file and as a folder.`);
+        }
+        throw new Error(`"${rel}" would be created twice (paths are compared without regard to letter case).`);
+    }
+
     for (const entry of plan) {
         if (!fs.existsSync(entry.path)) {
             continue;
@@ -277,10 +447,6 @@ function executePlan(plan: PlanEntry[], skipExisting: boolean): { created: numbe
     return { created, skipped };
 }
 
-// ---------------------------------------------------------------------------
-// Target folder
-// ---------------------------------------------------------------------------
-
 function folderOf(p: string): string | undefined {
     try {
         return fs.statSync(p).isDirectory() ? p : path.dirname(p);
@@ -301,15 +467,9 @@ async function resolveTargetFolder(uri: vscode.Uri | undefined, rootPath: string
         if (selectedPath) {
             return folderOf(selectedPath) ?? rootPath;
         }
-    } catch {
-        // fall through to the workspace root
-    }
+    } catch {}
     return rootPath;
 }
-
-// ---------------------------------------------------------------------------
-// Command
-// ---------------------------------------------------------------------------
 
 export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand("blueprintor.run", async (uri?: vscode.Uri) => {
@@ -349,6 +509,9 @@ export function activate(context: vscode.ExtensionContext) {
 
         try {
             const variables = readVariables(blueprint);
+            checkSnippets(blueprint);
+            const usedForms = collectUsedForms(blueprint);
+
             const values: Record<string, string> = {};
             const relativePath = path.relative(rootPath, targetFolder) || "root";
 
@@ -361,7 +524,7 @@ export function activate(context: vscode.ExtensionContext) {
                     prompt: `${question} (Target: ${relativePath})`,
                     placeHolder: `Value for ${variable.key}...`,
                     ignoreFocusOut: true,
-                    validateInput: (input) => (input.trim() === "" ? "A value is required" : undefined),
+                    validateInput: (input) => checkValue(input, usedForms.get(variable.key)),
                 });
                 if (value === undefined) {
                     return;
@@ -372,6 +535,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (!blueprint.structure || typeof blueprint.structure !== "object") {
                 throw new Error(`Blueprint "${blueprint.title}" has no "structure".`);
             }
+
             const plan: PlanEntry[] = [];
             buildPlan(targetFolder, blueprint.structure, blueprint, values, plan);
             if (plan.length === 0) {
